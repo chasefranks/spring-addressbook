@@ -23,7 +23,7 @@ public class MongoDBEntryRepositoryTest {
 		
 	@BeforeClass
 	public static void setUpBefore() {
-		entryRepository = new MongoDBEntryRepository("spring-addressbook-unit-tests", "entries");
+//		entryRepository = new MongoDBEntryRepository("spring-addressbook-unit-tests", "entries");
 	}
 
 	@Test

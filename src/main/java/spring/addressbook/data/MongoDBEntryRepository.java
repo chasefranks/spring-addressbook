@@ -12,6 +12,7 @@ import java.util.stream.StreamSupport;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import spring.addressbook.pojos.Address;
@@ -34,7 +35,7 @@ import com.mongodb.client.model.Filters;
  *
  */
 public class MongoDBEntryRepository implements EntryRepository {
-	
+		
 	private static MongoCollection<Document> collection;
 	
 	// static lambda expressions used to map between Documents and POJOs
@@ -158,11 +159,9 @@ public class MongoDBEntryRepository implements EntryRepository {
 		
 	}
 	
-	public MongoDBEntryRepository(String database, String collection) {
+	public MongoDBEntryRepository(MongoClient client, String database, String collection) {
 		
-		MongoClient client = new MongoClient();
-		MongoDatabase db = client.getDatabase(database);
-		
+		MongoDatabase db = client.getDatabase(database);		
 		this.collection = db.getCollection(collection);
 		
 	}	
