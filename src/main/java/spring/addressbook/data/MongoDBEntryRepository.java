@@ -32,7 +32,6 @@ import com.mongodb.client.model.Filters;
  * @author chase
  *
  */
-@Component
 public class MongoDBEntryRepository implements EntryRepository {
 		
 	private static MongoCollection<Document> collection;
