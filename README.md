@@ -9,6 +9,8 @@ This is a simple address book written in the Spring framework, with MongoDB as t
 * maven
 * [MongoDB](https://www.mongodb.org/downloads#production)
 
+## Setting up Mongo
+
 Install MongoDB with the defaults to try this app out. Start up Mongo after installation by typing
 
 ```
@@ -32,6 +34,15 @@ storage:
   dbPath: data/db 
 net:
   bindIp: 127.0.0.1
+```
+
+If you prefer to use an external Mongo instance, open the Spring Boot configuration file at /main/resources/application.properties, and change it to point to your mongod instance:
+
+```
+mongodb.host=mymongoserver
+mongodb.port=27018
+mongodb.database=addressbook
+mongodb.collection=entries
 ```
 
 ## Building and running
