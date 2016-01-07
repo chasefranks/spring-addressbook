@@ -1,4 +1,4 @@
-package spring.addressbook.config;
+package spring.addressbook;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +14,13 @@ import spring.addressbook.data.EntryRepository;
 import spring.addressbook.data.MongoDBEntryRepository;
 
 @SpringBootApplication
-@ComponentScan({"spring.addressbook.web"})
 public class SpringAddressbookApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringAddressbookApplication.class, args);
     }
     
-    // mongodb properties injected from application.properties
+    // injected from application.properties
     @Value("${mongodb.host}")
 	private String mongoHost;
     

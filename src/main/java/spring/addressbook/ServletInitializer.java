@@ -1,4 +1,4 @@
-package spring.addressbook.config;
+package spring.addressbook;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
