@@ -12,6 +12,8 @@ public interface EntryRepository {
 	
 	List<Entry> getEntriesByLetter(String letter, int count);
 	
+	long getEntryCountByLetter(String letter);
+	
 	List<Entry> getEntriesByLetter(String letter, String after, int count);
 	
 	Entry getEntryById(String id);

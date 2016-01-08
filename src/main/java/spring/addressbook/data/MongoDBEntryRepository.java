@@ -239,4 +239,13 @@ public class MongoDBEntryRepository implements EntryRepository {
 		return null;
 	}
 
+
+	@Override
+	public long getEntryCountByLetter(String letter) {
+		
+		String regex = "^" + letter.charAt(0);		
+		return collection.count(Filters.regex("lastName", regex, "i"));		
+		
+	}
+
 }
