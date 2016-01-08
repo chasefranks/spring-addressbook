@@ -14,6 +14,12 @@
         <li class="active"><a href="/">Home</a></li>
         <li><a href="/entry/add">Add Entry</a></li>            
       </ul>
+      <form class="navbar-form navbar-left" role="search" action="/searches" method="post">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search" name="searchParam">
+        </div>
+        <button type="submit" class="btn btn-default">Search</button>
+      </form>
     </div><!--/.nav-collapse -->
   </div>
 </nav>
