@@ -2,6 +2,8 @@ package spring.addressbook.data;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.regex;
+import static com.mongodb.client.model.Filters.text;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -23,6 +25,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.IndexModel;
+import com.mongodb.client.model.IndexOptions;
 
 /**
  * An EntryRepository implementation utilizing MongoDB and the MongoDB
@@ -162,8 +166,32 @@ public class MongoDBEntryRepository implements EntryRepository {
 		MongoDatabase db = client.getDatabase(database);		
 		this.collection = db.getCollection(collection);
 		
+		createIndex();
+		
 	}	
 	
+	private static void createIndex() {
+		
+		// check if the index already exists
+		for (Document index: collection.listIndexes()) {
+			if(index.get("name").equals("TextIndex")) {
+				return;
+			}
+		}
+		
+		// otherwise create the index we'll need
+		Document index = new Document()
+							.append("firstName", "text")
+							.append("lastName", "text")
+							.append("address.street", "text")
+							.append("address.city", "text")
+							.append("emailAddress.address", "text");		
+		
+		collection.createIndex(index, new IndexOptions().name("TextIndex"));
+		
+	}
+
+
 	@Override
 	public Entry getEntryByFirstNameAndLastName(String firstName,
 			String lastName) {
@@ -244,7 +272,42 @@ public class MongoDBEntryRepository implements EntryRepository {
 	public long getEntryCountByLetter(String letter) {
 		
 		String regex = "^" + letter.charAt(0);		
-		return collection.count(Filters.regex("lastName", regex, "i"));		
+		return collection.count(regex("lastName", regex, "i"));		
+		
+	}
+
+
+	@Override
+	public List<Entry> getEntriesByText(String text) {
+		
+		/*
+		 * for text search to work, we need to have created the following index in our database
+		 * assuming the collection is called 'entries', this could look something like
+		 * 
+		 * db.entries.createIndex({ 
+		 * 	firstName:"text", 
+		 * 	lastName:"text", 
+		 * 	'address.street':"text",
+		 * 	'address.city':"text", 
+		 * 	'emailAddress.address':"text"}, 
+		 * 	{
+		 * 		weights: {
+		 * 			firstName:5, 
+		 * 			lastName:10, 
+		 * 			'address.street':2, 
+		 * 			'address.city':3, 
+		 * 			'emailAddress.address':1
+		 * 		}, 
+		 * 		name:"TextIndex"
+		 * 	})
+		 * 
+		 */
+		
+		FindIterable<Document> iterable = collection.find(text(text));
+		
+		Stream docStream = StreamSupport.stream(iterable.spliterator(), false);
+		
+		return (List<Entry>) docStream.map(docToEntry).collect(toList());		
 		
 	}
 
