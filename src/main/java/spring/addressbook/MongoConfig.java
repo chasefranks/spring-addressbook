@@ -32,16 +32,12 @@ public class MongoConfig {
     private String port;
         
     @Bean()
-    public MongoClient createProdMongoClient() {
+    public MongoClient createProdMongoClient() throws Exception {
     	
     	String[] mongoHosts = mongoHost.split(",");
     	String[] mongoPorts = port.split(",");
     	
     	List<ServerAddress> replicaSet = new ArrayList<ServerAddress>();
-    	
-    	for (int i = 0; i < mongoHosts.length; i++) {
-    		replicaSet.add(new ServerAddress(mongoHosts[i].trim(), Integer.parseInt(mongoPorts[i].trim())));
-    	}
     	
     	/*
     	 * need to do some checks here
@@ -49,10 +45,20 @@ public class MongoConfig {
     	 * there must be at least 3 nodes in a mongo replica set
     	 * what if the arrays aren't equal size
     	 */
+    	if (mongoHosts.length == 2) {
+    		throw new Exception("Can't create MongoClient: make sure at least three nodes are configured for a mongodb replica set.");
+    	}
+    	
+    	if (mongoHosts.length != mongoPorts.length) {
+    		throw new Exception("Can't create MongoClient: ports can't be matched with hosts, make sure they are index aligned and equal in number.");
+    	}
+    	
+    	for (int i = 0; i < mongoHosts.length; i++) {
+    		replicaSet.add(new ServerAddress(mongoHosts[i].trim(), Integer.parseInt(mongoPorts[i].trim())));
+    	}   	
     			
 		return new MongoClient(replicaSet);
 		    	
-    }
-    
+    }    
 
 }
