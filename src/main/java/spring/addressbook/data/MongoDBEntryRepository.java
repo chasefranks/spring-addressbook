@@ -13,6 +13,8 @@ import java.util.stream.StreamSupport;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import spring.addressbook.pojos.Address;
@@ -36,9 +38,11 @@ import com.mongodb.client.model.IndexOptions;
  * @author chase
  *
  */
+@Component
 public class MongoDBEntryRepository implements EntryRepository {
-		
-	private static MongoCollection<Document> collection;
+	
+	private MongoClient client;
+	private MongoCollection<Document> collection;
 	
 	// static lambda expressions used to map between Documents and POJOs
 	static final Function<Document, Address> docToAddress = doc -> new Address(
@@ -161,7 +165,8 @@ public class MongoDBEntryRepository implements EntryRepository {
 		
 	}
 	
-	public MongoDBEntryRepository(MongoClient client, String database, String collection) {
+	@Autowired
+	public MongoDBEntryRepository(MongoClient client, @Value("${mongodb.database:addressbook}") String database, @Value("${mongodb.collection:entries}") String collection) {
 		
 		MongoDatabase db = client.getDatabase(database);		
 		this.collection = db.getCollection(collection);
@@ -170,7 +175,7 @@ public class MongoDBEntryRepository implements EntryRepository {
 		
 	}	
 	
-	private static void createIndex() {
+	private void createIndex() {
 		
 		// check if the index already exists
 		for (Document index: collection.listIndexes()) {
